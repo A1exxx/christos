@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import type { Product } from "@/lib/products";
 import { useExplain } from "./ExplainContext";
 import { asset } from "@/lib/asset";
+import { FRAMELESS, productImageSrc } from "@/lib/display";
 
 const priceFmt = new Intl.NumberFormat("ru-RU");
 
@@ -20,7 +21,11 @@ export function ProductCard({ product }: { product: Product }) {
     >
       <a href="#" className="block cursor-pointer">
         {/* Фото */}
-        <div className="relative aspect-[4/5] w-full overflow-hidden bg-surface">
+        <div
+          className={`relative aspect-[4/5] w-full overflow-hidden ${
+            FRAMELESS ? "" : "bg-surface"
+          }`}
+        >
           {product.limited && (
             <span className="absolute left-3 top-3 z-10 rounded-full border border-border bg-background/85 px-2.5 py-1 text-[10px] uppercase tracking-[0.18em] text-accent backdrop-blur-sm">
               Лимит
@@ -32,11 +37,11 @@ export function ProductCard({ product }: { product: Product }) {
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           >
             <Image
-              src={asset(product.image)}
+              src={asset(productImageSrc(product.image))}
               alt={product.name}
               fill
               sizes="(max-width: 768px) 50vw, 25vw"
-              className="object-cover"
+              className={FRAMELESS ? "object-contain" : "object-cover"}
             />
           </motion.div>
         </div>

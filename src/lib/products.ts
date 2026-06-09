@@ -128,19 +128,6 @@ export const products: Product[] = [
     image: "/products/bracelet.png",
     sizes: ["One size"],
   },
-  {
-    id: "pendant-lux",
-    name: "Кулон «Lux»",
-    category: "Аксессуары",
-    price: 1190,
-    collection: "Symbols",
-    description:
-      "Тонкий серебристый крест на изящной цепочке. Лаконичная форма на каждый день.",
-    material: "Нержавеющая сталь, гипоаллергенное покрытие",
-    image: "/products/pendant.png",
-    sizes: ["One size"],
-    limited: true,
-  },
 ];
 
 export const collections = ["Essentials", "Symbols"] as const;
