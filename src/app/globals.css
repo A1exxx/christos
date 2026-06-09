@@ -1,0 +1,83 @@
+@import "tailwindcss";
+
+/* ── Christos design tokens ─────────────────────────────── */
+:root {
+  --background: #faf9f7; /* warm off-white canvas */
+  --surface: #fefdfc; /* warm white — never pure #fff */
+  --foreground: #1c1917; /* near-black, never pure #000 */
+  --muted: #6b645e; /* warm stone gray — AA-safe on canvas */
+  --border: #e7e5e4; /* ultra-light hairline */
+  --accent: #a16207; /* restrained gold — used sparingly */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --font-display: var(--font-bodoni), Georgia, serif;
+  --font-sans: var(--font-jost), "Helvetica Neue", Arial, sans-serif;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01", "cv01";
+}
+
+/* Editorial display utility */
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+/* Wide-tracked label (eyebrow / meta) */
+.eyebrow {
+  font-family: var(--font-sans);
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+/* Selection */
+::selection {
+  background: var(--foreground);
+  color: var(--background);
+}
+
+/* Cloud preloader drift */
+@keyframes cloud-drift {
+  0% { transform: translateX(-8px); }
+  50% { transform: translateX(8px); }
+  100% { transform: translateX(-8px); }
+}
+@keyframes cloud-fade {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
+.reduced-safe {
+  /* hook for prefers-reduced-motion overrides */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
