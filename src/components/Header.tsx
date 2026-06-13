@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { CrossMark } from "./CrossMark";
 import { useExplain } from "./ExplainContext";
+import { CartButton } from "./cart/CartButton";
 
 const NAV = [
   { label: "Одежда", href: "#odezhda" },
@@ -92,12 +93,7 @@ export function Header() {
         {/* Правый блок */}
         <div className="flex items-center gap-3">
           <ExplainToggle />
-          <a
-            href="#"
-            className="text-sm text-muted transition-colors hover:text-foreground"
-          >
-            Сумка <span className="tabular-nums">(0)</span>
-          </a>
+          <CartButton />
         </div>
       </div>
 

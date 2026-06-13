@@ -36,6 +36,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# local runtime data (orders, registrations)
+/.data/
+
 # control-panel generated output (engine writes these; regenerated locally)
 /src/lib/catalog.generated.json
 /public/products/sourced/

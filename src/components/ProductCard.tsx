@@ -6,11 +6,15 @@ import type { Product } from "@/lib/products";
 import { useExplain } from "./ExplainContext";
 import { asset } from "@/lib/asset";
 import { FRAMELESS, productImageSrc } from "@/lib/display";
+import { useCart } from "./cart/CartContext";
 
 const priceFmt = new Intl.NumberFormat("ru-RU");
 
 export function ProductCard({ product }: { product: Product }) {
   const { explain } = useExplain();
+  const { add } = useCart();
+  const imageSrc = asset(productImageSrc(product.image));
+  const defaultSize = product.sizes[0];
 
   return (
     <motion.article
@@ -37,7 +41,7 @@ export function ProductCard({ product }: { product: Product }) {
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           >
             <Image
-              src={asset(productImageSrc(product.image))}
+              src={imageSrc}
               alt={product.name}
               fill
               sizes="(max-width: 768px) 50vw, 25vw"
@@ -77,6 +81,16 @@ export function ProductCard({ product }: { product: Product }) {
           )}
         </AnimatePresence>
       </a>
+
+      <button
+        type="button"
+        onClick={() =>
+          add({ id: product.id, name: product.name, price: product.price, image: imageSrc, size: defaultSize })
+        }
+        className="mt-3 w-full rounded-md border border-border py-2.5 text-[13px] text-foreground transition-colors hover:border-foreground active:scale-[0.99]"
+      >
+        В корзину
+      </button>
     </motion.article>
   );
 }

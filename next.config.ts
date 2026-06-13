@@ -1,16 +1,10 @@
 import type { NextConfig } from "next";
 
-// basePath задаётся при сборке для GitHub Pages (репозиторий-подпуть),
-// в dev остаётся пустым.
-const repo = (process.env.NEXT_PUBLIC_BASE_PATH || "").replace(/^\/+/, "");
-const basePath = repo ? `/${repo}` : "";
-
+// Динамический режим (логин, корзина, заказы, админка). Статический экспорт
+// под GitHub Pages отключён — хостинг настроим позже (Vercel/VPS).
 const nextConfig: NextConfig = {
-  output: "export", // статический экспорт в out/ для GitHub Pages
-  basePath,
-  trailingSlash: true,
   images: {
-    unoptimized: true, // Pages не запускает оптимизатор next/image
+    unoptimized: true,
   },
 };
 

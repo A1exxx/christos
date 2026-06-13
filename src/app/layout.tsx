@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Bodoni_Moda, Jost } from "next/font/google";
 import "./globals.css";
 import { ExplainProvider } from "@/components/ExplainContext";
+import { CartProvider } from "@/components/cart/CartContext";
+import { CartDrawer } from "@/components/cart/CartDrawer";
 import { Preloader } from "@/components/Preloader";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -43,10 +45,13 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <ExplainProvider>
-          <Preloader />
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
+          <CartProvider>
+            <Preloader />
+            <Header />
+            <main className="flex-1">{children}</main>
+            <Footer />
+            <CartDrawer />
+          </CartProvider>
         </ExplainProvider>
       </body>
     </html>
