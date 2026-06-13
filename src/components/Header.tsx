@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { CrossMark } from "./CrossMark";
 import { useExplain } from "./ExplainContext";
 import { CartButton } from "./cart/CartButton";
+import { AuthMenu } from "./auth/AuthMenu";
 
 const NAV = [
   { label: "Одежда", href: "#odezhda" },
@@ -93,6 +94,7 @@ export function Header() {
         {/* Правый блок */}
         <div className="flex items-center gap-3">
           <ExplainToggle />
+          <AuthMenu />
           <CartButton />
         </div>
       </div>

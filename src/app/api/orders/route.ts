@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import fs from "node:fs";
 import path from "node:path";
+import { getUser } from "@/lib/session";
 
 export const runtime = "nodejs";
 
@@ -13,6 +14,7 @@ type Order = {
   items: OrderItem[];
   total: number;
   contact: { name: string; phone: string; email?: string; note?: string };
+  userEmail?: string; // привязка к аккаунту, если вошёл
   createdAt: number;
   status: "new";
 };
@@ -32,11 +34,13 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "name and phone required" }, { status: 400 });
 
   if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+  const user = await getUser();
   const order: Order = {
     id: "ORD-" + Math.random().toString(36).slice(2, 8).toUpperCase(),
     items: body.items as OrderItem[],
     total: body.total ?? 0,
     contact: body.contact as Order["contact"],
+    userEmail: user?.email,
     createdAt: Date.now(),
     status: "new",
   };

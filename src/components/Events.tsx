@@ -1,5 +1,6 @@
 import { FadeIn } from "./FadeIn";
 import { events } from "@/lib/events";
+import { EventRegisterButton } from "./EventRegisterButton";
 
 export function Events() {
   return (
@@ -31,14 +32,17 @@ export function Events() {
                     {e.desc}
                   </p>
                 </div>
-                <a
-                  href={e.registerUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex w-fit items-center justify-center rounded-md bg-foreground px-6 py-3 text-sm text-background transition-transform active:scale-[0.98] md:w-auto"
-                >
-                  Записаться
-                </a>
+                <div className="flex flex-col items-start gap-2">
+                  <EventRegisterButton event={e.title} />
+                  <a
+                    href={e.registerUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[12px] text-muted underline-offset-4 hover:text-foreground hover:underline"
+                  >
+                    или написать в Telegram
+                  </a>
+                </div>
               </div>
             </FadeIn>
           ))}
