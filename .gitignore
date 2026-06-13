@@ -36,6 +36,12 @@ yarn-error.log*
 # vercel
 .vercel
 
+# control-panel generated output (engine writes these; regenerated locally)
+/src/lib/catalog.generated.json
+/public/products/sourced/
+/control-panel/node_modules/
+/control-panel/data/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
