@@ -7,6 +7,8 @@ import { store } from "./store.ts";
 import { runSearch } from "./search.ts";
 import { processPhoto } from "./photos.ts";
 import { publish } from "./publish.ts";
+import { generateDesign } from "./design.ts";
+import fs from "node:fs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = Fastify({ logger: false });
@@ -66,6 +68,37 @@ app.post("/api/moderate", async (req) => {
     }
   }
   return { error: "unknown action" };
+});
+
+// --- Дизайн-студия ---
+app.post("/api/design", async (req) => {
+  const { prompt } = (req.body as { prompt?: string }) || {};
+  if (!prompt || !prompt.trim()) return { error: "empty prompt" };
+  return await generateDesign(prompt.trim());
+});
+
+// сохранить сгенерированный принт как товар (одобренный)
+app.post("/api/design/save", async (req) => {
+  const { prompt, image, price } = (req.body as { prompt?: string; image?: string; price?: number }) || {};
+  if (!image) return { error: "image required" };
+  const id = "design-" + Math.random().toString(36).slice(2, 8);
+  store.addMany([
+    {
+      id,
+      source: "manual",
+      title: (prompt || "Дизайн").slice(0, 80),
+      titleRu: prompt?.slice(0, 80),
+      price: price ?? 19,
+      currency: "USD",
+      category: "Одежда",
+      imageOriginal: image,
+      imageCut: image,
+      status: "approved",
+      searchPrompt: prompt,
+      createdAt: Date.now(),
+    },
+  ]);
+  return { ok: true, id };
 });
 
 app.post("/api/publish", async () => publish());

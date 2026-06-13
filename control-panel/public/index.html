@@ -45,17 +45,33 @@
   <span style="margin-left:auto"><button class="ghost" onclick="doPublish()">Опубликовать в витрину</button></span>
 </header>
 <main>
-  <div class="search">
-    <input id="prompt" placeholder="Что искать? напр.: христианские футболки с крестом, минимализм, рейтинг 4.5+" />
-    <button onclick="doSearch()">Найти</button>
+  <div class="tabs" style="margin-bottom:20px">
+    <button id="m-products" aria-selected="true" onclick="setMode('products')">Поиск товаров</button>
+    <button id="m-studio" aria-selected="false" onclick="setMode('studio')">Дизайн-студия</button>
   </div>
-  <div id="summary"></div>
-  <div class="tabs">
-    <button data-tab="pending" aria-selected="true" onclick="switchTab('pending')">На модерации</button>
-    <button data-tab="approved" aria-selected="false" onclick="switchTab('approved')">Одобрено</button>
-    <button data-tab="rejected" aria-selected="false" onclick="switchTab('rejected')">Отклонено</button>
-  </div>
-  <div id="grid" class="grid"></div>
+
+  <section id="view-products">
+    <div class="search">
+      <input id="prompt" placeholder="Что искать? напр.: христианские футболки с крестом, минимализм, рейтинг 4.5+" />
+      <button onclick="doSearch()">Найти</button>
+    </div>
+    <div id="summary"></div>
+    <div class="tabs">
+      <button data-tab="pending" aria-selected="true" onclick="switchTab('pending')">На модерации</button>
+      <button data-tab="approved" aria-selected="false" onclick="switchTab('approved')">Одобрено</button>
+      <button data-tab="rejected" aria-selected="false" onclick="switchTab('rejected')">Отклонено</button>
+    </div>
+    <div id="grid" class="grid"></div>
+  </section>
+
+  <section id="view-studio" style="display:none">
+    <div class="search">
+      <input id="dprompt" placeholder="Опиши принт: напр. «минималистичный крест с тонкими лучами» или «рыба ихтис одной линией»" />
+      <button onclick="doDesign()">Сгенерировать</button>
+    </div>
+    <div id="dsummary"></div>
+    <div id="dresult"></div>
+  </section>
 </main>
 <script>
 let tab = "pending";
@@ -81,6 +97,42 @@ async function doSearch() {
 async function doPublish() {
   const r = await (await fetch("/api/publish", { method:"POST" })).json();
   alert("Опубликовано товаров: " + r.count + "\n→ " + r.path);
+}
+
+function setMode(m){
+  $("view-products").style.display = m==="products" ? "" : "none";
+  $("view-studio").style.display = m==="studio" ? "" : "none";
+  $("m-products").setAttribute("aria-selected", m==="products");
+  $("m-studio").setAttribute("aria-selected", m==="studio");
+}
+
+let lastDesign = null;
+async function doDesign(){
+  const prompt = $("dprompt").value.trim();
+  if (!prompt) return;
+  $("dsummary").innerHTML = '<div class="summary">Генерирую принт…</div>';
+  $("dresult").innerHTML = "";
+  const r = await (await fetch("/api/design", { method:"POST", headers:{"content-type":"application/json"}, body:JSON.stringify({prompt}) })).json();
+  if (r.error){ $("dsummary").innerHTML = '<div class="summary">Ошибка: '+r.error+'</div>'; return; }
+  lastDesign = { prompt, image: r.image };
+  $("dsummary").innerHTML = `<div class="summary">Режим: <b>${r.mode}</b>${r.note?" · "+r.note:""}</div>`;
+  $("dresult").innerHTML = `
+    <div class="card" style="max-width:340px">
+      <img src="${r.image}" alt="" style="background:#f3f1ee;object-fit:contain">
+      <div class="body">
+        <h3>${prompt}</h3>
+        <div class="acts">
+          <button onclick="saveDesign()">Сохранить как товар</button>
+          <button class="ghost" onclick="document.getElementById('dprompt').focus()">Доработать</button>
+        </div>
+      </div>
+    </div>`;
+}
+async function saveDesign(){
+  if (!lastDesign) return;
+  const r = await (await fetch("/api/design/save", { method:"POST", headers:{"content-type":"application/json"}, body:JSON.stringify(lastDesign) })).json();
+  alert(r.ok ? "Дизайн сохранён как товар (одобрен). Нажми «Опубликовать в витрину»." : "Ошибка сохранения");
+  refreshStatus();
 }
 
 function switchTab(t){ tab=t; syncTabs(); loadGrid(); }
