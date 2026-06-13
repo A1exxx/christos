@@ -3,6 +3,8 @@ import { ProductGrid } from "@/components/ProductGrid";
 import { FeatureSection } from "@/components/FeatureSection";
 import { TrustBand } from "@/components/TrustBand";
 import { Services } from "@/components/Services";
+import { Courses } from "@/components/Courses";
+import { Events } from "@/components/Events";
 import { products } from "@/lib/products";
 
 export default function Home() {
@@ -39,6 +41,10 @@ export default function Home() {
       <TrustBand />
 
       <Services />
+
+      <Courses />
+
+      <Events />
     </>
   );
 }

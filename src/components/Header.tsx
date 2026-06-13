@@ -8,8 +8,9 @@ import { useExplain } from "./ExplainContext";
 const NAV = [
   { label: "Одежда", href: "#odezhda" },
   { label: "Аксессуары", href: "#aksessuary" },
-  { label: "Дизайн-студия", href: "#studiya" },
   { label: "Услуги", href: "#uslugi" },
+  { label: "Курсы", href: "#kursy" },
+  { label: "События", href: "#sobytiya" },
 ];
 
 function ExplainToggle() {

@@ -95,9 +95,21 @@ function mockProducts(cfg: SearchConfig): RawProduct[] {
     { id: "mock-zodiac-09", title: "Zodiac Constellation Pendant Astrology Necklace", price: 3.5, currency: "USD", rating: 4.5, orders: 990 },
     { id: "mock-skull-10", title: "Gothic Skull Print Oversized Streetwear Tee", price: 7.7, currency: "USD", rating: 4.4, orders: 760 },
   ];
+  // для mock используем наши реальные сгенерированные фото (на Pages), чтобы демо было осмысленным
+  const PAGES = "https://a1exxx.github.io/christos/products";
+  const imgMap: Record<string, string> = {
+    "mock-cross-tee-01": `${PAGES}/grace.png`,
+    "mock-cross-neck-02": `${PAGES}/pendant.png`,
+    "mock-faith-hoodie-03": `${PAGES}/hoodie.png`,
+    "mock-ichthys-cap-04": `${PAGES}/cap.png`,
+    "mock-bracelet-05": `${PAGES}/bracelet.png`,
+    "mock-bibleverse-06": `${PAGES}/tote.png`,
+    "mock-grace-sweat-07": `${PAGES}/pax.png`,
+    "mock-cross-ring-08": `${PAGES}/sol.png`,
+  };
   return base
     .filter((p) => (cfg.maxPriceUsd ? p.price <= cfg.maxPriceUsd : true))
     .filter((p) => (p.rating ?? 5) >= cfg.minRating)
     .filter((p) => (p.orders ?? 0) >= cfg.minOrders)
-    .map((p) => ({ ...p, image: `https://picsum.photos/seed/${p.id}/640/800` }));
+    .map((p) => ({ ...p, image: imgMap[p.id] || `https://picsum.photos/seed/${p.id}/640/800` }));
 }
