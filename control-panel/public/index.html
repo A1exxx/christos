@@ -53,9 +53,10 @@
   <section id="view-products">
     <div class="search">
       <input id="prompt" placeholder="Что искать? напр.: христианские футболки с крестом, минимализм, рейтинг 4.5+" />
-      <button onclick="doSearch()">Найти</button>
+      <button onclick="doPreview()">Найти примеры</button>
     </div>
     <div id="summary"></div>
+    <div id="preview"></div>
     <div class="tabs">
       <button data-tab="pending" aria-selected="true" onclick="switchTab('pending')">На модерации</button>
       <button data-tab="approved" aria-selected="false" onclick="switchTab('approved')">Одобрено</button>
@@ -85,12 +86,38 @@ async function refreshStatus() {
   $("s-approved").textContent = s.counts.approved;
 }
 
-async function doSearch() {
+// Ступень 1 — примеры для одобрения направления
+async function doPreview() {
   const prompt = $("prompt").value.trim();
   if (!prompt) return;
-  $("summary").innerHTML = '<div class="summary">Ищу…</div>';
+  $("summary").innerHTML = '<div class="summary">Подбираю примеры…</div>';
+  $("preview").innerHTML = "";
+  const r = await (await fetch("/api/search/preview", { method:"POST", headers:{"content-type":"application/json"}, body:JSON.stringify({prompt}) })).json();
+  if (r.error){ $("summary").innerHTML = '<div class="summary">Ошибка: '+r.error+'</div>'; return; }
+  $("summary").innerHTML = `<div class="summary">Режим: <b>${r.mode}</b> · нашёл подходящих: <b>${r.christian}</b>. Ключевые слова: ${(r.searchConfig?.keywords||[]).join(", ")}<br>Примеры ниже — одобри направление, и я найду всё в этом стиле.</div>`;
+  const cards = (r.samples||[]).map(c => `
+    <div class="card">
+      <img loading="lazy" src="${c.imageOriginal}" alt="">
+      <div class="body"><h3>${c.title}</h3>
+        <div class="meta"><span>$${c.price}</span>${c.rating?`<span>★ ${c.rating}</span>`:""}<span>${c.category}</span></div>
+        ${c.classification?`<div class="cls">✓ ${c.classification.reason}</div>`:""}
+      </div></div>`).join("");
+  $("preview").innerHTML = `
+    <div class="grid">${cards || '<p class="note">Ничего подходящего. Измени промпт.</p>'}</div>
+    ${r.samples&&r.samples.length ? `<div style="display:flex;gap:10px;margin:18px 0">
+      <button onclick="doSearchAll()">✓ Искать всё в этом направлении</button>
+      <button class="ghost" onclick="document.getElementById('prompt').focus()">Изменить промпт</button>
+    </div>` : ""}`;
+}
+
+// Ступень 2 — направление одобрено: полный прогон в очередь модерации
+async function doSearchAll() {
+  const prompt = $("prompt").value.trim();
+  if (!prompt) return;
+  $("preview").innerHTML = '<div class="summary">Ищу всё в этом направлении…</div>';
   const r = await (await fetch("/api/search", { method:"POST", headers:{"content-type":"application/json"}, body:JSON.stringify({prompt}) })).json();
-  $("summary").innerHTML = `<div class="summary">Режим: <b>${r.mode}</b> · найдено <b>${r.found}</b> · христианских <b>${r.christian}</b> · добавлено в очередь <b>${r.added}</b> · отсеяно классификатором <b>${r.rejected}</b><br>Ключевые слова: ${(r.searchConfig?.keywords||[]).join(", ")}</div>`;
+  $("summary").innerHTML = `<div class="summary">Готово: найдено <b>${r.found}</b> · добавлено в очередь на модерацию <b>${r.added}</b> · отсеяно классификатором <b>${r.rejected}</b>. Ниже одобряй каждый товар.</div>`;
+  $("preview").innerHTML = "";
   tab = "pending"; syncTabs(); loadGrid(); refreshStatus();
 }
 

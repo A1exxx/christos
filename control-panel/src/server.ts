@@ -4,7 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { config, ROOT } from "./config.ts";
 import { store } from "./store.ts";
-import { runSearch } from "./search.ts";
+import { runSearch, previewSearch } from "./search.ts";
 import { processPhoto } from "./photos.ts";
 import { publish } from "./publish.ts";
 import { generateDesign } from "./design.ts";
@@ -36,6 +36,14 @@ app.get("/api/status", async () => ({
   },
 }));
 
+// Ступень 1 — примеры для одобрения направления (в очередь не пишет)
+app.post("/api/search/preview", async (req) => {
+  const { prompt } = (req.body as { prompt?: string }) || {};
+  if (!prompt || !prompt.trim()) return { error: "empty prompt" };
+  return await previewSearch(prompt.trim());
+});
+
+// Ступень 2 — направление одобрено: полный прогон в очередь модерации
 app.post("/api/search", async (req) => {
   const { prompt } = (req.body as { prompt?: string }) || {};
   if (!prompt || !prompt.trim()) return { error: "empty prompt" };
