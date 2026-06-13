@@ -82,34 +82,29 @@ export async function searchCJ(cfg: SearchConfig): Promise<{ products: RawProduc
 
 /** Mock: правдоподобные кандидаты (с парой нерелевантных — проверить классификатор). */
 function mockProducts(cfg: SearchConfig): RawProduct[] {
-  const base: Array<Omit<RawProduct, "image">> = [
-    { id: "mock-cross-tee-01", title: "Minimalist Cross Print Cotton T-Shirt Christian Faith", price: 6.8, currency: "USD", rating: 4.8, orders: 1240 },
-    { id: "mock-cross-neck-02", title: "Stainless Steel Cross Pendant Necklace Christian", price: 3.2, currency: "USD", rating: 4.7, orders: 3100 },
-    { id: "mock-faith-hoodie-03", title: "Faith Over Fear Embroidered Hoodie Unisex", price: 14.5, currency: "USD", rating: 4.6, orders: 540 },
-    { id: "mock-ichthys-cap-04", title: "Ichthys Fish Embroidered Dad Hat Christian Cap", price: 5.1, currency: "USD", rating: 4.5, orders: 870 },
-    { id: "mock-bracelet-05", title: "Braided Leather Cross Charm Bracelet Adjustable", price: 2.4, currency: "USD", rating: 4.4, orders: 2050 },
-    { id: "mock-bibleverse-06", title: "Bible Verse Psalm Minimalist Tote Bag Canvas", price: 4.0, currency: "USD", rating: 4.6, orders: 410 },
-    { id: "mock-grace-sweat-07", title: "Grace Lettering Oversized Sweatshirt Beige", price: 13.2, currency: "USD", rating: 4.7, orders: 320 },
-    { id: "mock-cross-ring-08", title: "Titanium Cross Ring Minimalist Christian Jewelry", price: 2.9, currency: "USD", rating: 4.3, orders: 1500 },
-    // нерелевантные — классификатор должен отсеять:
-    { id: "mock-zodiac-09", title: "Zodiac Constellation Pendant Astrology Necklace", price: 3.5, currency: "USD", rating: 4.5, orders: 990 },
-    { id: "mock-skull-10", title: "Gothic Skull Print Oversized Streetwear Tee", price: 7.7, currency: "USD", rating: 4.4, orders: 760 },
-  ];
-  // для mock используем наши реальные сгенерированные фото (на Pages), чтобы демо было осмысленным
+  // каждое название ТОЧНО соответствует своему фото (наши сгенерированные фото на Pages)
   const PAGES = "https://a1exxx.github.io/christos/products";
-  const imgMap: Record<string, string> = {
-    "mock-cross-tee-01": `${PAGES}/grace.png`,
-    "mock-cross-neck-02": `${PAGES}/pendant.png`,
-    "mock-faith-hoodie-03": `${PAGES}/hoodie.png`,
-    "mock-ichthys-cap-04": `${PAGES}/cap.png`,
-    "mock-bracelet-05": `${PAGES}/bracelet.png`,
-    "mock-bibleverse-06": `${PAGES}/tote.png`,
-    "mock-grace-sweat-07": `${PAGES}/pax.png`,
-    "mock-cross-ring-08": `${PAGES}/sol.png`,
-  };
+  const base: Array<Omit<RawProduct, "image"> & { img: string }> = [
+    { id: "mock-grace", title: "Minimalist Cross Print Cotton T-Shirt — White", price: 6.8, currency: "USD", rating: 4.8, orders: 1240, img: "grace.png" },
+    { id: "mock-lumen", title: "Lumen Light Grey Christian T-Shirt", price: 6.4, currency: "USD", rating: 4.7, orders: 980, img: "lumen.png" },
+    { id: "mock-ichthys", title: "Ichthys Fish Symbol Cotton T-Shirt — Sand", price: 6.9, currency: "USD", rating: 4.6, orders: 1110, img: "ichthys.png" },
+    { id: "mock-hoodie", title: "Faith Cross Embroidered Hoodie — Charcoal", price: 14.5, currency: "USD", rating: 4.7, orders: 540, img: "hoodie.png" },
+    { id: "mock-pax", title: "Pax Cream Sweatshirt with Embroidered Cross", price: 12.2, currency: "USD", rating: 4.6, orders: 470, img: "pax.png" },
+    { id: "mock-sol", title: "Agnus Sand Crewneck Sweatshirt — Cross", price: 12.9, currency: "USD", rating: 4.5, orders: 360, img: "sol.png" },
+    { id: "mock-cap", title: "Cross Embroidered Dad Cap — Beige", price: 5.1, currency: "USD", rating: 4.6, orders: 870, img: "cap.png" },
+    { id: "mock-tote", title: "Bible Verse Canvas Tote Bag — Natural", price: 4.0, currency: "USD", rating: 4.6, orders: 410, img: "tote.png" },
+    { id: "mock-bracelet", title: "Braided Cord Cross Charm Bracelet", price: 2.4, currency: "USD", rating: 4.7, orders: 2050, img: "bracelet.png" },
+    { id: "mock-pendant", title: "Silver Cross Pendant Necklace — Minimalist", price: 3.2, currency: "USD", rating: 4.8, orders: 3100, img: "pendant.png" },
+    // нерелевантные — классификатор должен отсеять (фото-заглушка, в очередь не попадут):
+    { id: "mock-zodiac", title: "Zodiac Constellation Astrology Pendant Necklace", price: 3.5, currency: "USD", rating: 4.5, orders: 990, img: "" },
+    { id: "mock-skull", title: "Gothic Skull Print Oversized Streetwear Tee", price: 7.7, currency: "USD", rating: 4.6, orders: 760, img: "" },
+  ];
   return base
     .filter((p) => (cfg.maxPriceUsd ? p.price <= cfg.maxPriceUsd : true))
     .filter((p) => (p.rating ?? 5) >= cfg.minRating)
     .filter((p) => (p.orders ?? 0) >= cfg.minOrders)
-    .map((p) => ({ ...p, image: imgMap[p.id] || `https://picsum.photos/seed/${p.id}/640/800` }));
+    .map(({ img, ...p }) => ({
+      ...p,
+      image: img ? `${PAGES}/${img}` : `https://picsum.photos/seed/${p.id}/640/800`,
+    }));
 }
