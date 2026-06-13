@@ -5,9 +5,21 @@ import { TrustBand } from "@/components/TrustBand";
 import { Services } from "@/components/Services";
 import { Courses } from "@/components/Courses";
 import { Events } from "@/components/Events";
-import { products } from "@/lib/products";
+import { readContent } from "@/lib/content.server";
+import type { Product } from "@/lib/products";
+import type { Service } from "@/lib/services";
+import type { Event } from "@/lib/events";
+import type { Course } from "@/lib/courses";
 
-export default function Home() {
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  const products = readContent<Product>("products");
+  const services = readContent<Service>("services");
+  const events = readContent<Event>("events");
+  const courses = readContent<Course>("courses");
+
   const clothing = products.filter((p) => p.category === "Одежда");
   const accessories = products.filter((p) => p.category === "Аксессуары");
 
@@ -15,12 +27,7 @@ export default function Home() {
     <>
       <Hero />
 
-      <ProductGrid
-        id="odezhda"
-        eyebrow="Коллекция"
-        title="Одежда"
-        products={clothing}
-      />
+      <ProductGrid id="odezhda" eyebrow="Коллекция" title="Одежда" products={clothing} />
 
       <FeatureSection
         id="studiya"
@@ -31,20 +38,15 @@ export default function Home() {
         image="/products/studio.png"
       />
 
-      <ProductGrid
-        id="aksessuary"
-        eyebrow="Коллекция"
-        title="Аксессуары"
-        products={accessories}
-      />
+      <ProductGrid id="aksessuary" eyebrow="Коллекция" title="Аксессуары" products={accessories} />
 
       <TrustBand />
 
-      <Services />
+      <Services services={services} />
 
-      <Courses />
+      <Courses courses={courses} />
 
-      <Events />
+      <Events events={events} />
     </>
   );
 }

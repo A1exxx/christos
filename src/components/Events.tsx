@@ -1,8 +1,8 @@
 import { FadeIn } from "./FadeIn";
-import { events } from "@/lib/events";
+import type { Event } from "@/lib/events";
 import { EventRegisterButton } from "./EventRegisterButton";
 
-export function Events() {
+export function Events({ events }: { events: Event[] }) {
   return (
     <section
       id="sobytiya"

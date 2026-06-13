@@ -1,9 +1,9 @@
 import Image from "next/image";
 import { FadeIn } from "./FadeIn";
-import { services } from "@/lib/services";
+import type { Service } from "@/lib/services";
 import { asset } from "@/lib/asset";
 
-export function Services() {
+export function Services({ services }: { services: Service[] }) {
   return (
     <section
       id="uslugi"

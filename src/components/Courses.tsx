@@ -1,7 +1,7 @@
 import { FadeIn } from "./FadeIn";
-import { courses, COURSES_HOME } from "@/lib/courses";
+import { COURSES_HOME, type Course } from "@/lib/courses";
 
-export function Courses() {
+export function Courses({ courses }: { courses: Course[] }) {
   return (
     <section
       id="kursy"

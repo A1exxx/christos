@@ -41,7 +41,7 @@ export const config = {
   },
   storefrontCatalog: path.resolve(
     ROOT,
-    process.env.STOREFRONT_CATALOG || "../src/lib/catalog.generated.json"
+    process.env.STOREFRONT_CATALOG || "../.data/content/products.json"
   ),
   storefrontPublicDir: path.resolve(ROOT, "../public/products/sourced"),
 };
